@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/package.mk
 
 TARGET_CFLAGS += $(FPIC)
 
-define Package/olsrd-dev/template
+define Package/olsrd2/template
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
@@ -39,9 +39,9 @@ define Package/olsrd2
   DEPENDS:=+libpthread
 endef
 
-define Package/olsrd2/conffiles
-/etc/config/olsrd
-endef
+#define Package/olsrd2/conffiles
+#/etc/config/olsrd
+#endef
 
 #define Package/olsrd-dev-mod-arprefresh
 #  $(call Package/olsrd-dev/template)
