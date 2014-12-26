@@ -1,30 +1,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oonf-api-git
-PKG_VERSION:=2014-06-16
-PKG_REV:=master
-PKG_RELEASE:=$(PKG_REV)
+PKG_VERSION:=master
+PKG_RELEASE:=1
 
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://olsr.org/git/oonf_api.git
-PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=git://olsr.org/oonf_api.git
+PKG_SOURCE_VERSION:=origin/master
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=$(PKG_REV)
-
 CMAKE_INSTALL:=1
 
-include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 
-CMAKE_SOURCE_DIR=$(CURDIR)/../../
-CMAKE_OPTIONS=-D OONF_DO_NOT_REGISTER_PACKAGE:Bool=true \
-              -D OONF_NO_WERROR:Bool=true \
-              -D OONF_LOGGING_LEVEL:String=debug \
-              -D OONF_NO_TESTING:Bool=true \
-              -D UCI:Bool=true \
-              -D INSTALL_LIB_DIR:Path=lib/oonf \
-              -D INSTALL_INCLUDE_DIR:Path=include/oonf \
-              -D INSTALL_CMAKE_DIR:Path=lib/oonf \
+
+include $(INCLUDE_DIR)/package.mk
+#include $(INCLUDE_DIR)/cmake.mk
 
 define Package/oonf-api-git/template
 	SECTION:=net
@@ -39,6 +29,19 @@ define Package/oonf-api-git
 	TITLE:= Build OONF-API static libraries (git)
 	BUILDONLY:=1
 endef
+
+
+CMAKE_SOURCE_DIR=$(CURDIR)/../../
+CMAKE_OPTIONS=-D OONF_DO_NOT_REGISTER_PACKAGE:Bool=true \
+              -D OONF_NO_WERROR:Bool=true \
+              -D OONF_LOGGING_LEVEL:String=debug \
+              -D OONF_NO_TESTING:Bool=true \
+              -D UCI:Bool=true \
+              -D INSTALL_LIB_DIR:Path=lib/oonf \
+              -D INSTALL_INCLUDE_DIR:Path=include/oonf \
+              -D INSTALL_CMAKE_DIR:Path=lib/oonf \
+
+
 
 #define Package/oonf-api-git-common
 #	$(call Package/oonf-api-git/template) 
@@ -124,6 +127,13 @@ endef
 #endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include -I${STAGING_DIR}/usr/include/libnl-tiny
+
+define Build/Compile
+	rm -rf $(PKG_INSTALL_DIR)
+	mkdir -p $(PKG_INSTALL_DIR)
+	$(call Build/Compile/Default,all)
+	$(call Build/Compile/Default,libs)
+endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/oonf/common \
