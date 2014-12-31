@@ -55,13 +55,12 @@ CMAKE_OPTIONS=-D OONF_DO_NOT_REGISTER_PACKAGE:Bool=true \
               -D INSTALL_CMAKE_DIR:Path=lib/oonf \
               -D CMAKE_PREFIX_PATH=$(STAGING_DIR)/usr
 
-
+define Build/Configure
+        cd $(PKG_BUILD_DIR)/build && cmake ..
+endef
 
 define Build/Compile
-	rm -rf $(PKG_INSTALL_DIR)
-	mkdir -p $(PKG_INSTALL_DIR)
-	$(call Build/Compile/Default,all)
-	$(call Build/Compile/Default,libs)
+     $(MAKE) -C $(PKG_BUILD_DIR)	
 endef
 
 define Build/Install
@@ -88,10 +87,6 @@ define Package/olsrd2-git/install
 	$(INSTALL_DATA) \
 		./files/olsrd2.uci \
 		$(1)/etc/config/olsrd2
-endef
-
-define Package/olsrd2-git/conffiles
-/etc/config/olsrd2
 endef
 
 

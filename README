@@ -8,3 +8,10 @@ src-git ninux git://github.com/ninuxorg/ninux-openwrt-packages.git
 Then use the follow commands to update/install packages from the new repo:
 openwrt$ ./scripts/feeds update -a
 openwrt$ ./scripts/feeds install -a -d y -p ninux
+
+----- For olsrv 2 install
+On host packages:
+cmake
+libnl-dev
+libnl-3-dev
+libnl-genl-3-dev
