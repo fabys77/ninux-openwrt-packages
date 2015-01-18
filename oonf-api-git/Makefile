@@ -1,3 +1,11 @@
+# 
+# Copyright (C) 2008-2011 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+# $Id $
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oonf-api-git
@@ -6,28 +14,28 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=git://olsr.org/oonf_api.git
+PKG_SOURCE_URL:=git://olsr.org/oonf-api-git.git
 PKG_SOURCE_VERSION:=origin/master
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 CMAKE_INSTALL:=1
 
-
-
 include $(INCLUDE_DIR)/package.mk
-#include $(INCLUDE_DIR)/cmake.mk
+
+TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 
 define Package/oonf-api-git/template
-	SECTION:=net
-	CATEGORY:=Network
-	MAINTAINER:=Henning Rogge <hrogge@gmail.com>
-	SUBMENU:=OLSR.org network framework
-	URL:=http://www.olsr.org/
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Routing and Redirection
+  TITLE:=OONF API for Sburratone by Ninux
+  MAINTAINER:=contatti@ninux.org
+  URL:=http://www.olsr.org/
 endef
 
 define Package/oonf-api-git
-	$(call Package/oonf-api-git/template) 
-	TITLE:= Build OONF-API static libraries (git)
-	BUILDONLY:=1
+  $(call Package/oonf-api-git/template)
+  MENU:=1
+  DEPENDS:=+librt +libnl-tiny +libuci
 endef
 
 
@@ -35,228 +43,29 @@ CMAKE_SOURCE_DIR=$(CURDIR)/../../
 CMAKE_OPTIONS=-D OONF_DO_NOT_REGISTER_PACKAGE:Bool=true \
               -D OONF_NO_WERROR:Bool=true \
               -D OONF_LOGGING_LEVEL:String=debug \
-              -D OONF_NO_TESTING:Bool=true \
               -D UCI:Bool=true \
+              -D OONF_APP_DEFAULT_CFG_HANDLER:String=uci \
+              -D OONF_CUSTOM_STATIC_PLUGINS:String="cfg_compact ff_dat_metric neighbor_probing nl80211_listener link_config layer2info cfg_uciloader nhdpinfo olsrv2info" \
               -D INSTALL_LIB_DIR:Path=lib/oonf \
               -D INSTALL_INCLUDE_DIR:Path=include/oonf \
               -D INSTALL_CMAKE_DIR:Path=lib/oonf \
+              -D CMAKE_PREFIX_PATH=$(STAGING_DIR)/usr
 
-
-
-#define Package/oonf-api-git-common
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Common-API (generic helpers functions) (git)
-#endef
-
-#define Package/oonf-api-git-config
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Config-API (generic configuration library) (git)
-#	DEPENDS:=+oonf-api-git-common
-#endef
-
-#define Package/oonf-api-git-rfc5444
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=RFC5444-API (generic parser/generator for RFC5444) (git)
-#	DEPENDS:=+oonf-api-git-common
-#endef
-
-#define Package/oonf-api-git-core
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Core-API (basic infrastructure/scheduler code) (git)
-#	DEPENDS:=+oonf-api-git-common +oonf-api-git-config +librt
-#endef
-
-#define Package/oonf-api-git-subsystems
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=OONF subsystems (high level infrastructure) (git)
-#	DEPENDS:=+oonf-api-git-common +oonf-api-git-config +oonf-api-git-rfc5444 +oonf-api-git-core
-#endef
-
-#define Package/oonf-plugin-git-cfgio-file
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=File input/output configuration plugin (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-cfgparser-compact
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Compact configurationf format plugin (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-eth-listener
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Ethernet speed detector (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-httptelnet
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=HTTP to Telnet bridge plugin (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-layer2-viewer
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Telnet viewer for layer2 data (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-link-config
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Manual configuration of layer2 link data (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-nl80211-listener
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Probing plugin for nl80211 (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +libnl-tiny +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-plugin-controller
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Remote loading and unloading of plugins (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-#define Package/oonf-plugin-git-remotecontrol
-#	$(call Package/oonf-api-git/template) 
-#	TITLE:=Remote debugging and configuration plugin (git)
-#	DEPENDS:=+oonf-api-git-core +oonf-api-git-subsystems +ldconfig
-#endef
-
-TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include -I${STAGING_DIR}/usr/include/libnl-tiny
+define Build/Configure
+        cd $(PKG_BUILD_DIR)/build && cmake ..
+endef
 
 define Build/Compile
-	rm -rf $(PKG_INSTALL_DIR)
-	mkdir -p $(PKG_INSTALL_DIR)
-	$(call Build/Compile/Default,all)
-	$(call Build/Compile/Default,libs)
+	$(MAKE) -C $(PKG_BUILD_DIR)/build	
 endef
 
-define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/oonf/common \
-		       $(1)/usr/include/oonf/config \
-	               $(1)/usr/include/oonf/rfc5444 \
-	               $(1)/usr/include/oonf/core \
-	               $(1)/usr/include/oonf/core/os_generic \
-	               $(1)/usr/include/oonf/subsystems \
-	               $(1)/usr/include/oonf/subsystems/os_linux
-        
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/common/*.h \
-		$(1)/usr/include/oonf/common
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/config/*.h \
-		$(1)/usr/include/oonf/config
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/rfc5444/*.h \
-		$(1)/usr/include/oonf/rfc5444
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/core/*.h \
-		$(1)/usr/include/oonf/core
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/core/os_generic/*.h \
-		$(1)/usr/include/oonf/core/os_generic
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/subsystems/*.h \
-		$(1)/usr/include/oonf/subsystems
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/include/oonf/subsystems/os_linux/*.h \
-		$(1)/usr/include/oonf/subsystems/os_linux
-
-	$(INSTALL_DIR) $(1)/usr/lib/oonf/
-	$(INSTALL_BIN) \
-		$(PKG_INSTALL_DIR)/usr/lib/oonf/lib*.{so*,a} \
-		$(1)/usr/lib/oonf/
-	$(INSTALL_DATA) \
-		$(PKG_INSTALL_DIR)/usr/lib/oonf/OONF*.cmake                                                  \
-		$(1)/usr/lib/oonf/
-endef
-
-#define Package/oonf-api-git-common/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_common*.so* $(1)/usr/lib/oonf
+#define Package/olsrd2-git/install
+#	$(INSTALL_DIR) $(1)/usr/sbin
+#	$(INSTALL_DIR) $(1)/usr/lib
+#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/olsrd2 $(1)/usr/sbin/
+#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/*.so* $(1)/usr/lib/
 #endef
 
-#define Package/oonf-api-git-config/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_config*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-api-git-rfc5444/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_rfc5444*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-api-git-core/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_core*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-api-git-subsystems/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_subsystems*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-cfgio-file/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_cfgio_file*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-cfgparser-compact/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_cfgparser_compact*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-httptelnet/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_httptelnet*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-eth-listener/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_eth_listener*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-layer2-viewer/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_layer2_viewer*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-link-config/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_link_config*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-nl80211-listener/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_nl80211_listener*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-plugin-controller/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_plugin_controller*.so* $(1)/usr/lib/oonf
-#endef
-
-#define Package/oonf-plugin-git-remotecontrol/install
-#	$(INSTALL_DIR) $(1)/usr/lib/oonf
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/oonf/liboonf_remotecontrol*.so* $(1)/usr/lib/oonf
-#endef
 
 $(eval $(call BuildPackage,oonf-api-git))
-#$(eval $(call BuildPackage,oonf-api-git-common))
-#$(eval $(call BuildPackage,oonf-api-git-config))
-#$(eval $(call BuildPackage,oonf-api-git-rfc5444))
-#$(eval $(call BuildPackage,oonf-api-git-core))
-#$(eval $(call BuildPackage,oonf-api-git-subsystems))
-#$(eval $(call BuildPackage,oonf-plugin-git-cfgio-file))
-#$(eval $(call BuildPackage,oonf-plugin-git-cfgparser-compact))
-#$(eval $(call BuildPackage,oonf-plugin-git-eth-listener))
-#$(eval $(call BuildPackage,oonf-plugin-git-httptelnet))
-#$(eval $(call BuildPackage,oonf-plugin-git-layer2-viewer))
-#$(eval $(call BuildPackage,oonf-plugin-git-link-config))
-#$(eval $(call BuildPackage,oonf-plugin-git-nl80211-listener))
-#$(eval $(call BuildPackage,oonf-plugin-git-plugin-controller))
-#$(eval $(call BuildPackage,oonf-plugin-git-remotecontrol))
+
