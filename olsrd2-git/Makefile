@@ -38,9 +38,9 @@ define Package/olsrd2-git
   DEPENDS:=+librt +libnl-tiny +libuci
 endef
 
-define Package/olsrd2-git/conffiles
-/etc/config/olsrd2
-endef
+#define Package/olsrd2-git/conffiles
+#/etc/config/olsrd2
+#endef
 
 
 CMAKE_SOURCE_DIR=$(CURDIR)/../../
@@ -63,25 +63,11 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR)/build	
 endef
 
-define Build/Install
-	$(INSTALL_DIR) $(1)/etc
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DIR) $(1)/usr
+define Package/olsrd2-git/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) \
-		$(PKG_BUILD_DIR)/olsrd2 \
-		$(1)/usr/sbin
-#	$(INSTALL_BIN) \
-#		./files/olsrd2.init \
-#		$(1)/etc/init.d/olsrd2
-#	$(INSTALL_BIN) \
-#		./files/olsrd2.hotplug \
-#		$(1)/etc/hotplug.d/iface/50-olsrd2
-#	$(INSTALL_DATA) \
-#		./files/olsrd2.uci \
-#		$(1)/etc/config/olsrd2
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/olsrd2 $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/*.so* $(1)/usr/lib/
 endef
 
 
