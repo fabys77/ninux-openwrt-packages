@@ -8,13 +8,13 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=oonf-api-git
+PKG_NAME:=oonf-olsrd2-git
 PKG_VERSION:=master
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=git://olsr.org/oonf-api.git
+PKG_SOURCE_URL:=git://olsr.org/oonf.git
 PKG_SOURCE_VERSION:=origin/master
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 CMAKE_INSTALL:=1
@@ -23,20 +23,24 @@ include $(INCLUDE_DIR)/package.mk
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 
-define Package/oonf-api-git/template
+define Package/oonf-olsrd2-git/template
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
-  TITLE:=OONF API for Sburratone by Ninux
+  TITLE:=OLSR V2 daemon packaged for Sburratone by Ninux
   MAINTAINER:=contatti@ninux.org
   URL:=http://www.olsr.org/
 endef
 
-define Package/oonf-api-git
-  $(call Package/oonf-api-git/template)
+define Package/oonf-olsrd2-git
+  $(call Package/oonf-olsrd2-git/template)
   MENU:=1
   DEPENDS:=+librt +libnl-tiny +libuci
 endef
+
+#define Package/oonf-olsrd2-git/conffiles
+#/etc/config/olsrd2
+#endef
 
 
 CMAKE_SOURCE_DIR=$(CURDIR)/../../
@@ -59,13 +63,13 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR)/build	
 endef
 
-#define Package/olsrd2-git/install
-#	$(INSTALL_DIR) $(1)/usr/sbin
-#	$(INSTALL_DIR) $(1)/usr/lib
-#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/olsrd2 $(1)/usr/sbin/
-#	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/*.so* $(1)/usr/lib/
-#endef
+define Package/oonf-olsrd2-git/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/olsrd2-static $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/*.so* $(1)/usr/lib/
+endef
 
 
-$(eval $(call BuildPackage,oonf-api-git))
+$(eval $(call BuildPackage,oonf-olsrd2-git))
 
